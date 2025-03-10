@@ -1,0 +1,9 @@
+[submodule "chip8-roms"]
+	path = chip8-roms
+	url = https://github.com/kripod/chip8-roms.git
+[submodule "raylib"]
+	path = raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "olcPixelGameEngine"]
+	path = olcPixelGameEngine
+	url = https://github.com/OneLoneCoder/olcPixelGameEngine.git
