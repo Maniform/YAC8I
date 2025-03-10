@@ -17,12 +17,12 @@
 int main(int argc, char** argv)
 {
 	C8Engine demo;
-	if (demo.Construct(SCREEN_WIDTH, SCREEN_HEIGHT, PIXEL_WIDTH, PIXEL_WIDTH * 2))
-	{
+//	if (demo.Construct(SCREEN_WIDTH, SCREEN_HEIGHT, PIXEL_WIDTH, PIXEL_WIDTH * 2))
+//	{
 		const string rom = argc > 1 ? argv[1] : TEST_ROM;
-		demo.loadRomFromFile(rom.c_str());
-		demo.Start();
-	}
+//		demo.loadRomFromFile(rom.c_str());
+
+//	}
 
 	return 0;
 }

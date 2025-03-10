@@ -1,5 +1,8 @@
 #include <C8Engine.h>
+
 #include <fstream>
+#include <thread>
+
 
 #define ROM_START 0x200
 #define FONT_START 0x50
@@ -14,12 +17,6 @@ C8Engine::C8Engine()
 	, ST(0)
 	, V{ 0 }
 	, F()
-	, keys { 
-		olc::K1,	olc::K2,	olc::K3,	olc::K4,
-		olc::A,		olc::Z,		olc::E,		olc::R,
-		olc::Q,		olc::S,		olc::D,		olc::F,
-		olc::W,		olc::X,		olc::C,		olc::V
-	}
 	, keyMap{
 		0x01, 0x02, 0x03, 0x0C,
 		0x04, 0x05, 0x06, 0x0D,
@@ -33,8 +30,6 @@ C8Engine::C8Engine()
 	, dis(0, 255)
 	, framelimit(true)
 {
-	sAppName = "C8Engine";
-
 	ram.resize(RAM_SIZE);
 	rom = span<uint8_t>(ram.begin() + ROM_START, ram.size() - ROM_START);
 	const vector<uint8_t> font = {
@@ -59,15 +54,7 @@ C8Engine::C8Engine()
 	memcpy(F.data(), font.data(), font.size());
 }
 
-bool C8Engine::OnUserCreate()
-{
-	// Called once at the start, so create things here
-	SetScreenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	return true;
-}
-
-bool C8Engine::OnUserUpdate(float fElapsedTime)
+bool C8Engine::update(float fElapsedTime)
 {
 	// Exécuter une seule instruction de l'émulateur
 	if ((pc + 1) < ram.size())
@@ -82,7 +69,7 @@ bool C8Engine::OnUserUpdate(float fElapsedTime)
 	if (framelimit)
 	{
 		double delay = (1 / 60.0 - fElapsedTime) * 1000.0;
-		std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(delay)));
+		this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(delay)));
 	}
 
 	return running;
@@ -118,7 +105,7 @@ void C8Engine::execute(const uint16_t opcode)
 #ifdef GB_DEBUG_PRINT
 			printf("CLS");
 #endif
-			Clear(olc::Pixel(0, 0, 0));
+            clearScreen();
 			pc += 2;
 			break;
 
@@ -604,35 +591,35 @@ uint8_t C8Engine::getKey(const uint16_t kbValue) const
 	return static_cast<uint8_t>(log2(kbValue));
 }
 
-uint8_t C8Engine::readPixel(int x, int y) const
-{
-	olc::Sprite* screen = GetDrawTarget();
-	olc::Pixel pixel = screen->GetPixel(x, y);
-	return pixel.r | pixel.g | pixel.b;
-}
+//uint8_t C8Engine::readPixel(int x, int y) const
+//{
+//	olc::Sprite* screen = GetDrawTarget();
+//	olc::Pixel pixel = screen->GetPixel(x, y);
+//	return pixel.r | pixel.g | pixel.b;
+//}
 
-void C8Engine::updateKeyboard()
-{
-	pkb = kb;
-
-	for (uint8_t i = 0; i < keys.size(); i++)
-	{
-		if (GetKey(keys[i]).bHeld)
-		{
-			kb |= 0b1 << keyMap[i];
-		}
-		else
-		{
-			kb &= ~(0b1 << keyMap[i]);
-		}
-	}
-
-	if (GetKey(olc::L).bPressed)
-	{
-		framelimit = !framelimit;
-		printf("Framelimit : %s\n", framelimit ? "ON" : "OFF");
-	}
-}
+//void C8Engine::updateKeyboard()
+//{
+//	pkb = kb;
+//
+//	for (uint8_t i = 0; i < keys.size(); i++)
+//	{
+//		if (GetKey(keys[i]).bHeld)
+//		{
+//			kb |= 0b1 << keyMap[i];
+//		}
+//		else
+//		{
+//			kb &= ~(0b1 << keyMap[i]);
+//		}
+//	}
+//
+//	if (GetKey(olc::L).bPressed)
+//	{
+//		framelimit = !framelimit;
+//		printf("Framelimit : %s\n", framelimit ? "ON" : "OFF");
+//	}
+//}
 
 void C8Engine::updateTimers()
 {

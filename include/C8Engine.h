@@ -1,6 +1,5 @@
 #pragma once
 
-#include <olcPixelGameEngine.h>
 #include <vector>
 #include <span>
 #include <random>
@@ -10,18 +9,15 @@ using namespace std;
 
 #define SCREEN_WIDTH	64
 #define SCREEN_HEIGHT	32
-#define FREQUENCY		4,194304 //MHz
 #define RAM_SIZE		4096 //bytes
 
-class C8Engine : public olc::PixelGameEngine
+class C8Engine
 {
 public:
 	C8Engine();
 
 public:
-	bool OnUserCreate() override;
-
-	bool OnUserUpdate(float fElapsedTime) override;
+	bool update(float deltaTime);
 
 	void loadRomFromFile(const char* filename);
 
@@ -40,7 +36,7 @@ private:
 	uint8_t ST; // Sound timer
 	uint8_t V[16]; // Variables
 	span<uint8_t> F; // Font
-	const vector<olc::Key> keys;
+	const vector<unsigned int> keys;
 	const vector<uint8_t> keyMap;
 	uint16_t pkb; //previous keyboard state
 	uint16_t kb;
@@ -51,6 +47,13 @@ private:
 	uniform_int_distribution<> dis;
 
 	bool framelimit;
+    
+    virtual void writePixel(uint8_t x, uint8_t y, bool state) = 0;
+    virtual bool readPixel(uint8_t x, uint8_t y) = 0;
+    virtual void clearScreen() = 0;
+    
+    virtual void updateKeyboard() = 0;
+    void updateTimers();
 
 	void execute(const uint16_t opcode);
 
@@ -58,8 +61,4 @@ private:
 	uint8_t* getVx(const uint16_t opcode);
 	uint8_t* getVy(const uint16_t opcode);
 	uint8_t getKey(const uint16_t kbValue) const;
-
-	uint8_t readPixel(int x, int y) const;
-	void updateKeyboard();
-	void updateTimers();
 };
