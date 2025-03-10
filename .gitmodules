@@ -7,3 +7,12 @@
 [submodule "olcPixelGameEngine"]
 	path = olcPixelGameEngine
 	url = https://github.com/OneLoneCoder/olcPixelGameEngine.git
+[submodule "3rdParty/raylib"]
+	path = 3rdParty/raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "3rdParty/chip8-roms"]
+	path = 3rdParty/chip8-roms
+	url = https://github.com/kripod/chip8-roms.git
+[submodule "3rdParty/olcPixelGameEngine"]
+	path = 3rdParty/olcPixelGameEngine
+	url = https://github.com/OneLoneCoder/olcPixelGameEngine.git
