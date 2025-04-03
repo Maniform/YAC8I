@@ -1,14 +1,18 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 23)
 
 if(APPLE)
-	add_subdirectory(3rdParty/raylib)
+	set(C8ENGINE_FILES include/C8EnginePE.h src/C8EnginePE.cpp)
 else()
-	set(C8ENGINE_FILES include/OlcC8Engine.h include/OlcC8Engine.cpp)
+	set(C8ENGINE_FILES include/C8EngineOLC.h src/C8EngineOCL.cpp)
 endif()
 
 project(YAC8I)
+
+if(APPLE)
+	find_package(PixelEngine REQUIRED)
+endif()
 
 add_executable(YAC8I
 	main.cpp
@@ -19,5 +23,10 @@ add_executable(YAC8I
 	${C8ENGINE_FILES}
 )
 
-target_include_directories(YAC8I PRIVATE include 3rdParty/olcPixelGameEngine)
-target_link_libraries(YAC8I PRIVATE raylib)
+target_include_directories(YAC8I PRIVATE ${CMAKE_SOURCE_DIR}/include)
+if(APPLE)
+	target_include_directories(YAC8I PRIVATE ${PE_INCLUDE_DIRS})
+	target_link_libraries(YAC8I PRIVATE ${PE_LIBRARIES})
+else()
+	target_include_directories(YAC8I PRIVATE 3rdParty/olcPixelGameEngine)
+endif()

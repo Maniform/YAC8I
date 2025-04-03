@@ -1,5 +1,6 @@
 #include <C8Engine.h>
 
+#include <cstring>
 #include <fstream>
 #include <thread>
 
@@ -54,9 +55,8 @@ C8Engine::C8Engine()
 	memcpy(F.data(), font.data(), font.size());
 }
 
-bool C8Engine::update(float fElapsedTime)
+bool C8Engine::update()
 {
-	// Exécuter une seule instruction de l'émulateur
 	if ((pc + 1) < ram.size())
 	{
 		updateKeyboard();
@@ -66,26 +66,34 @@ bool C8Engine::update(float fElapsedTime)
 		execute(opcode);
 	}
 
-	if (framelimit)
-	{
-		double delay = (1 / 60.0 - fElapsedTime) * 1000.0;
-		this_thread::sleep_for(std::chrono::milliseconds(static_cast<long long>(delay)));
-	}
-
 	return running;
 }
 
-
 void C8Engine::loadRomFromFile(const char* filename)
 {
-	ifstream romFileStream;
-	romFileStream.open(filename, ios::binary | ios::beg);
-	romFileStream.unsetf(std::ios::skipws);
-	if (romFileStream.is_open())
+    ifstream romFileStream;
+    romFileStream.open(filename, ios::binary);
+	romFileStream.seekg(ios::beg);
+    romFileStream.unsetf(std::ios::skipws);
+    if (romFileStream.is_open())
+    {
+        romFileStream.read(reinterpret_cast<char*>(rom.data()), rom.size());
+        romFileStream.close();
+    }
+	else
 	{
-		romFileStream.read(reinterpret_cast<char*>(rom.data()), rom.size());
-		romFileStream.close();
+		throw runtime_error("can't open rom " + string(filename));
 	}
+}
+
+void C8Engine::setFramelimitEnabled(bool enabled)
+{
+	framelimit = enabled;
+}
+
+bool C8Engine::isFramelimitEnabled() const
+{
+	return framelimit;
 }
 
 void C8Engine::execute(const uint16_t opcode)
@@ -113,8 +121,8 @@ void C8Engine::execute(const uint16_t opcode)
 #ifdef GB_DEBUG_PRINT
 			printf("RET");
 #endif
-			pc = stack.top();
-			stack.pop();
+			pc = callstack.top();
+			callstack.pop();
 			break;
 
 		default: // SYS addr
@@ -137,7 +145,7 @@ void C8Engine::execute(const uint16_t opcode)
 #ifdef GB_DEBUG_PRINT
 		printf("CALL addr");
 #endif
-		stack.push(pc + 2);
+		callstack.push(pc + 2);
 		pc = opcode & 0x0FFF;
 		break;
 
@@ -372,8 +380,8 @@ void C8Engine::execute(const uint16_t opcode)
 #ifdef GB_DEBUG_PRINT
 		printf("DRW Vx, Vy, nibble");
 #endif
-		uint8_t& x = V[(opcode & 0x0F00) >> 8];
-		uint8_t& y = V[(opcode & 0x00F0) >> 4];
+		const uint8_t& x = V[(opcode & 0x0F00) >> 8];
+		const uint8_t& y = V[(opcode & 0x00F0) >> 4];
 		uint8_t height = opcode & 0x000F;
 		uint8_t pixel;
 
@@ -390,7 +398,8 @@ void C8Engine::execute(const uint16_t opcode)
 					{
 						V[0xF] = 1;
 					}
-					Draw(x + xline, y + yline, p ^ 1 ? olc::WHITE : olc::BLACK);
+//					Draw(x + xline, y + yline, p ^ 1 ? olc::WHITE : olc::BLACK);
+                    writePixel(x + xline, y + yline, p ^ 1);
 				}
 			}
 		}
