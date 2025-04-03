@@ -6,7 +6,7 @@ project(YAC8I)
 
 find_package(PixelEngine)
 if(NOT PE_FOUND)
-	set(PixelEngine_DIR 3rdParty/PixelEngine)
+	set(PixelEngine_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/PixelEngine)
 	include(${PixelEngine_DIR}/cmake/PixelEngineConfig.cmake)
 	add_subdirectory(${PixelEngine_DIR})
 endif()
