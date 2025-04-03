@@ -17,6 +17,8 @@ if(NOT PE_FOUND)
 	add_subdirectory(${PixelEngine_DIR})
 endif()
 
+add_definitions(-DROMS_FOLDER="${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/chip8-roms/")
+
 add_executable(YAC8I
 	main.cpp
 
