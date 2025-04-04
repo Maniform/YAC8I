@@ -1,4 +1,7 @@
 #define OLC_PGE_APPLICATION
+#if defined(_WIN32) && !defined(_DEBUG)
+#include <Windows.h>
+#endif
 #include <C8EnginePE.h>
 
 #include <iostream>
@@ -18,6 +21,10 @@ int main(int argc, char** argv)
 {
 	try
 	{
+#if defined(_WIN32) && !defined(_DEBUG)
+		FreeConsole();
+#endif
+
 		C8EnginePE demo;
 		
 		const string rom = argc > 1 ? argv[1] : string(ROMS_FOLDER) + TEST_ROM;

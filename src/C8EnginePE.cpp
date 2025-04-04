@@ -103,4 +103,8 @@ void C8EnginePE::buzz()
 #else
 	cout << "\007";
 #endif
+
+#ifdef _DEBUG
+	C8Engine::buzz();
+#endif
 }
