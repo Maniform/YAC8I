@@ -4,12 +4,6 @@ set(CMAKE_CXX_STANDARD 23)
 
 project(YAC8I)
 
-# Initialiser tous les submodules
-execute_process(
-    COMMAND git submodule update --init --recursive
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-
 find_package(PixelEngine)
 if(NOT PE_FOUND)
 	set(PixelEngine_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/PixelEngine)
