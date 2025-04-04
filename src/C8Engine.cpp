@@ -4,7 +4,6 @@
 #include <fstream>
 #include <thread>
 
-
 #define ROM_START 0x200
 #define FONT_START 0x50
 
