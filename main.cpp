@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#define TEST_ROM "demos/Maze (alt) [David Winter, 199x].ch8"
+//#define TEST_ROM "demos/Maze (alt) [David Winter, 199x].ch8"
 //#define TEST_ROM "demos/Maze [David Winter, 199x].ch8"
 //#define TEST_ROM "demos/Particle Demo [zeroZshadow, 2008].ch8"
 //#define TEST_ROM "demos/Trip8 Demo (2008) [Revival Studios].ch8"
@@ -16,6 +16,8 @@
 //#define TEST_ROM "games/15 Puzzle [Roger Ivie].ch8"
 //#define TEST_ROM "games/Addition Problems [Paul C. Moews].ch8"
 //#define TEST_ROM "games/Tic-Tac-Toe [David Winter].ch8"
+//#define TEST_ROM "games/Blinky [Hans Christian Egeberg, 1991].ch8"
+#define TEST_ROM "games/Tetris [Fran Dachille, 1991].ch8"
 
 int main(int argc, char** argv)
 {
