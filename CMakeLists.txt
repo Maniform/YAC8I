@@ -29,6 +29,8 @@ if(APPLE)
 	target_link_libraries(YAC8I PRIVATE "-framework AudioToolBox")
 endif()
 
+install(DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>/ DESTINATION .)
+
 if(WIN32)
 	set(YAC8I_RUNTIMES ${GLEW_RUNTIME} ${PE_RUNTIME})
 
