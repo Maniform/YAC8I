@@ -34,3 +34,16 @@ target_link_libraries(YAC8I PRIVATE ${PE_LIBRARIES})
 if(APPLE)
 	target_link_libraries(YAC8I PRIVATE "-framework AudioToolBox")
 endif()
+
+if(WIN32)
+	set(YAC8I_RUNTIMES ${GLEW_RUNTIME} ${PE_RUNTIME})
+
+	add_custom_command(
+		  TARGET YAC8I
+		  POST_BUILD
+		  COMMAND ${CMAKE_COMMAND}
+		  ARGS -E copy_if_different
+		  ${YAC8I_RUNTIMES}
+		  $<TARGET_FILE_DIR:YAC8I>
+	  )
+endif()

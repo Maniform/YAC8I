@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <thread>
+#include <GLFW/glfw3.h>
 
 #ifdef __APPLE__
 #include <AudioToolbox/AudioServices.h>
@@ -23,11 +24,13 @@ C8EnginePE::C8EnginePE()
 		GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D, GLFW_KEY_F,
 		GLFW_KEY_Z, GLFW_KEY_X, GLFW_KEY_C, GLFW_KEY_V
 	}
+	, previousOptionKeys{
+		{ GLFW_KEY_L, GLFW_RELEASE }
+	}
 {
 	engine = this;
 	
-	time = glfwGetTime();
-	glfwSetKeyCallback(pe.getWindow(), keyCallback);
+	time = pe.getTime();
 }
 
 bool C8EnginePE::update()
@@ -40,9 +43,9 @@ bool C8EnginePE::update()
 	if(isFramelimitEnabled())
 	{
 		this_thread::sleep_for(chrono::microseconds(static_cast<long long>(1e6/FRAMERATE)));
-		time = glfwGetTime();
+		time = pe.getTime();
 	}
-	
+
 	return running;
 }
 
@@ -62,26 +65,16 @@ bool C8EnginePE::readPixel(uint8_t x, uint8_t y) const
 	return (pixel.x + pixel.y + pixel.z) > 0;
 }
 
-void C8EnginePE::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-	if(key == GLFW_KEY_L && action == GLFW_PRESS)
-	{
-		if(engine)
-		{
-			engine->setFramelimitEnabled(!engine->isFramelimitEnabled());
-		}
-	}
-}
-
 void C8EnginePE::updateKeyboard()
 {
 	pkb = kb;
 
 	for (uint8_t i = 0; i < keys.size(); i++)
 	{
-		switch (glfwGetKey(pe.getWindow(), keys[i]))
+		switch (pe.getKey(keys[i]))
 		{
 			case GLFW_PRESS:
+			case GLFW_REPEAT:
 				kb |= 0b1 << keyMap[i];
 				break;
 				
@@ -89,6 +82,17 @@ void C8EnginePE::updateKeyboard()
 				kb &= ~(0b1 << keyMap[i]);
 				break;
 		}
+	}
+
+	const GLuint key = pe.getKey(GLFW_KEY_L);
+	if (key == GLFW_PRESS && key != previousOptionKeys[GLFW_KEY_L])
+	{
+		setFramelimitEnabled(!isFramelimitEnabled());
+	}
+
+	for (auto& previousOptionKey : previousOptionKeys)
+	{
+		previousOptionKey.second = pe.getKey(previousOptionKey.first);
 	}
 }
 
