@@ -7,6 +7,8 @@
 class C8EnginePE : public C8Engine
 {
 public:
+	static C8EnginePE* engine;
+	
 	C8EnginePE();
 	
 	virtual bool update() override;
@@ -18,6 +20,9 @@ public:
 private:
 	PixelEngine pe;
 	double time;
+	const vector<unsigned int> keys;
 	
+	static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	virtual void updateKeyboard() override;
+	virtual void buzz() override;
 };

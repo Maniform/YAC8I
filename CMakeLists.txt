@@ -31,3 +31,6 @@ add_executable(YAC8I
 
 target_include_directories(YAC8I PRIVATE include ${PE_INCLUDE_DIRS})
 target_link_libraries(YAC8I PRIVATE ${PE_LIBRARIES})
+if(APPLE)
+	target_link_libraries(YAC8I PRIVATE "-framework AudioToolBox")
+endif()

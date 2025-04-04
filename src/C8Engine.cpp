@@ -11,21 +11,25 @@
 // Debug
 //#define GB_DEBUG_PRINT
 
+#ifdef GB_DEBUG_PRINT
+#include <iostream>
+#endif
+
 C8Engine::C8Engine()
-	: pc(ROM_START)
-	, I(0)
-	, DT(0)
-	, ST(0)
-	, V{ 0 }
-	, F()
+	: pkb(0)
+	, kb(0)
 	, keyMap{
 		0x01, 0x02, 0x03, 0x0C,
 		0x04, 0x05, 0x06, 0x0D,
 		0x07, 0x08, 0x09, 0x0E,
 		0x0A, 0x00, 0x0B, 0x0F
 	}
-	, pkb(0)
-	, kb(0)
+	, pc(ROM_START)
+	, I(0)
+	, DT(0)
+	, ST(0)
+	, V{ 0 }
+	, F()
 	, running(true)
 	, gen(random_device{}())
 	, dis(0, 255)
@@ -71,15 +75,15 @@ bool C8Engine::update()
 
 void C8Engine::loadRomFromFile(const char* filename)
 {
-    ifstream romFileStream;
-    romFileStream.open(filename, ios::binary);
+	ifstream romFileStream;
+	romFileStream.open(filename, ios::binary);
 	romFileStream.seekg(ios::beg);
-    romFileStream.unsetf(std::ios::skipws);
-    if (romFileStream.is_open())
-    {
-        romFileStream.read(reinterpret_cast<char*>(rom.data()), rom.size());
-        romFileStream.close();
-    }
+	romFileStream.unsetf(std::ios::skipws);
+	if (romFileStream.is_open())
+	{
+		romFileStream.read(reinterpret_cast<char*>(rom.data()), rom.size());
+		romFileStream.close();
+	}
 	else
 	{
 		throw runtime_error("can't open rom " + string(filename));
@@ -113,7 +117,7 @@ void C8Engine::execute(const uint16_t opcode)
 #ifdef GB_DEBUG_PRINT
 			printf("CLS");
 #endif
-            clearScreen();
+			clearScreen();
 			pc += 2;
 			break;
 
@@ -399,7 +403,7 @@ void C8Engine::execute(const uint16_t opcode)
 						V[0xF] = 1;
 					}
 //					Draw(x + xline, y + yline, p ^ 1 ? olc::WHITE : olc::BLACK);
-                    writePixel(x + xline, y + yline, p ^ 1);
+					writePixel(x + xline, y + yline, p ^ 1);
 				}
 			}
 		}
@@ -607,6 +611,11 @@ uint8_t C8Engine::getKey(const uint16_t kbValue) const
 //	return pixel.r | pixel.g | pixel.b;
 //}
 
+void C8Engine::buzz()
+{
+	printf("buzz !\n");
+}
+
 //void C8Engine::updateKeyboard()
 //{
 //	pkb = kb;
@@ -639,5 +648,6 @@ void C8Engine::updateTimers()
 	if (ST > 0)
 	{
 		ST--;
+		buzz();
 	}
 }

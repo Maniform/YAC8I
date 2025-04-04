@@ -18,18 +18,23 @@ public:
 	C8Engine();
 
 public:
-    virtual bool update();
-    
-    void loadRomFromFile(const char* filename);
+	virtual bool update();
+	
+	void loadRomFromFile(const char* filename);
 	
 	void setFramelimitEnabled(bool enabled);
 	bool isFramelimitEnabled() const;
-    
+	
 protected:
-    
-    virtual void clearScreen() = 0;
-    virtual void writePixel(uint8_t x, uint8_t y, bool state) = 0;
-    virtual bool readPixel(uint8_t x, uint8_t y) const = 0;
+	uint16_t pkb; //previous keyboard state
+	uint16_t kb;
+	const vector<uint8_t> keyMap;
+	
+	virtual void clearScreen() = 0;
+	virtual void writePixel(uint8_t x, uint8_t y, bool state) = 0;
+	virtual bool readPixel(uint8_t x, uint8_t y) const = 0;
+	
+	virtual void buzz();
 
 private:
 	vector<uint8_t> ram;
@@ -46,10 +51,6 @@ private:
 	uint8_t ST; // Sound timer
 	uint8_t V[16]; // Variables
 	span<uint8_t> F; // Font
-	const vector<unsigned int> keys;
-	const vector<uint8_t> keyMap;
-	uint16_t pkb; //previous keyboard state
-	uint16_t kb;
 
 	bool running;
 
@@ -57,11 +58,11 @@ private:
 	uniform_int_distribution<> dis;
 
 	bool framelimit;
-    
-    virtual void updateKeyboard() = 0;
-    void updateTimers();
+	
+	virtual void updateKeyboard() = 0;
+	void updateTimers();
 
-    void execute(const uint16_t opcode);
+	void execute(const uint16_t opcode);
 
 	uint8_t getValue(const uint16_t value, const uint8_t position) const;
 	uint8_t* getVx(const uint16_t opcode);
